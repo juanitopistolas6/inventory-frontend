@@ -1,6 +1,20 @@
+import { useQuery } from '@tanstack/react-query'
+import { useAuth } from '../context/auth-context'
 import { ProductCard } from './product-card'
+import { IProduct, IResponse } from '../util/interfaces'
 
 export const Products = () => {
+  const { axios } = useAuth()
+
+  const { data: productResponse } = useQuery<IResponse<IProduct[]>>({
+    queryKey: ['products'],
+    queryFn: async () => {
+      const response = await axios.get('/product')
+
+      return response.data
+    },
+  })
+
   return (
     <div className="flex-col space-y-4">
       <h1 className="text-start font-bold text-3xl">Lista de productos</h1>
@@ -26,17 +40,9 @@ export const Products = () => {
       <div className="border-b-1 border border-gray-400"></div>
 
       <div className="grid 2xl:grid-cols-5 xl:grid-cols-4 md:grid-cols-3 gap-3">
-        <ProductCard />
-
-        <ProductCard />
-
-        <ProductCard />
-
-        <ProductCard />
-
-        <ProductCard />
-
-        <ProductCard />
+        {productResponse?.data.map((product) => {
+          return <ProductCard {...product} key={product._id} />
+        })}
       </div>
     </div>
   )

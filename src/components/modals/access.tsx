@@ -1,8 +1,7 @@
-import { useMutation } from '@tanstack/react-query'
 import { HeroIcons } from '../ui/heroicons'
 import { useForm } from 'react-hook-form'
-import axios from 'axios'
-import { FormEvent } from 'react'
+import { FormEvent, useEffect } from 'react'
+import { useAuth } from '../../context/auth-context'
 
 interface accessProp {
   closeModal: () => void
@@ -15,28 +14,21 @@ interface FormValues {
 
 export const Access = (accessParams: accessProp) => {
   const { closeModal } = accessParams
+  const { login, isAuthenticated } = useAuth()
 
   const { register, getValues } = useForm<FormValues>()
 
-  const { data, mutate } = useMutation({
-    mutationFn: async () => {
-      const query = getValues()
-
-      console.log(`query: ${query}`)
-
-      return await axios.post('http://localhost:3000/auth/login', query)
-    },
-    onError: (err) => {
-      console.error('Error during login:', err)
-    },
-  })
+  useEffect(() => {
+    if (isAuthenticated) closeModal()
+  }, [isAuthenticated])
 
   const onSubmit = (e: FormEvent) => {
     e.preventDefault()
-    mutate()
-  }
 
-  console.log(data)
+    const values = getValues()
+
+    login(values)
+  }
 
   return (
     <div className="w-full h-auto flex-col rounded-l-3xl rounded-r-3xl bg-white p-2">

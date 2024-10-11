@@ -1,24 +1,27 @@
+import { IProduct } from '../util/interfaces'
 import { HeroIcons } from './ui/heroicons'
 
-export const ProductCard = () => {
+export const ProductCard = (product: IProduct) => {
+  const { _id, banner, category, name, price } = product
+
   return (
-    <div className="max-w-sm mx-auto bg-white rounded-lg p-1 border-2  overflow-hidden">
+    <div
+      className="mx-auto bg-white rounded-lg px-1 py-2 border-2  overflow-hidden"
+      id={_id}
+    >
       <img
         className="w-full h-48 object-cover border rounded-t-md"
-        src="https://www.shutterstock.com/shutterstock/photos/2378798341/display_1500/stock-photo-white-washing-machine-isolated-on-a-white-background-front-load-washer-machine-with-electronic-2378798341.jpg"
+        src={banner}
       />
 
-      <div className="p-4 flex-col">
-        <p className="text-sm text-gray-500">Lunch</p>
+      <div className="p-4 relative flex-col justify-between">
+        <div className="relative top-1">
+          <p className="text-sm text-gray-500">{category}</p>
+          <h2 className="text-xl font-bold text-gray-800">{name}</h2>
+        </div>
 
-        <h2 className="text-xl font-bold text-gray-800">
-          Grilled Salmon Steak
-        </h2>
-
-        <div className="mt-4 flex items-center justify-between w-full gap-1">
-          <div>
-            <span className="text-lg font-semibold text-gray-900">$15.00</span>
-          </div>
+        <div className="flex items-center justify-between">
+          <span className="text-base font-semibold text-gray-900">{`$${price}`}</span>
 
           <div className="flex items-center">
             <button className="text-black border font-bold border-gray-300 rounded-full p-1 hover:bg-gray-200">
