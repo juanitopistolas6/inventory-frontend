@@ -1,8 +1,12 @@
+import { useCart } from '../context/cart-context'
 import { IProduct } from '../util/interfaces'
 import { HeroIcons } from './ui/heroicons'
 
 export const ProductCard = (product: IProduct) => {
   const { _id, banner, category, name, price } = product
+  const { addToCart, removeFromCart, state } = useCart()
+
+  const inCart = state.cart?.cart.find((item) => item.product._id === _id)
 
   return (
     <div
@@ -24,13 +28,25 @@ export const ProductCard = (product: IProduct) => {
           <span className="text-base font-semibold text-gray-900">{`$${price}`}</span>
 
           <div className="flex items-center">
-            <button className="text-black border font-bold border-gray-300 rounded-full p-1 hover:bg-gray-200">
+            <button
+              className="text-black border font-bold border-gray-300 rounded-full p-1 hover:bg-gray-200"
+              onClick={() => {
+                removeFromCart(product)
+              }}
+              disabled={(inCart?.units ?? 0) <= 0}
+            >
               <HeroIcons name="MinusIcon" className="w-5 h-5" />
             </button>
 
-            <span className="mx-3 text-lg">0</span>
+            <span className="mx-3 text-lg">{inCart?.units ?? 0}</span>
 
-            <button className="flex text-white bg-blue-500 font-bold rounded-full p-1 hover:bg-blue-600">
+            <button
+              className="flex text-white bg-blue-500 font-bold rounded-full p-1 hover:bg-blue-600"
+              onClick={() => {
+                addToCart(product)
+              }}
+              disabled={(inCart?.units ?? 0) >= product.units}
+            >
               <HeroIcons name="PlusIcon" className="w-5 h-5" />
             </button>
           </div>

@@ -1,40 +1,109 @@
-import { ICart, IResponse } from '../util/interfaces'
+import { ICart, ICartProduct, IResponse } from '../util/interfaces'
 import { useAxios } from './use-axios'
 
-interface Payload {
-  id: string
-  units: number
+export interface cartState {
+  cart: ICart | null
+  error: boolean
 }
 
-interface cartState {
-  cart: ICart
-}
-
-interface cartPayload {
-  action: 'ADD_TO_CART' | 'REMOVE_FROM_CART' | 'GET_CART'
-  payload: Payload
-}
+export type cartPayload =
+  | { action: 'ADD_TO_CART'; payload: ICartProduct }
+  | { action: 'REMOVE_FROM_CART'; payload: ICartProduct }
+  | { action: 'GET_CART'; payload: ICart }
+  | { action: 'FETCH_ERROR' }
 
 const { axios } = useAxios()
 
-export async function intialValie() {
-  const response = await axios.get<IResponse<ICart>>('/cart')
+export const intialValue: () => Promise<cartState> = async () => {
+  try {
+    const response = await axios.get<IResponse<ICart>>('/cart')
 
-  const { data } = response.data
+    const { data: cart } = response.data
 
-  return data
+    if (response.data.status !== 200) return { cart: null, error: true }
+
+    return { cart, error: false }
+  } catch {
+    return { cart: null, error: true }
+  }
 }
 
-export function cartReducer(state: cartState, payload: cartPayload) {
-  const { action, payload: cartPayload } = payload
+export function cartReducer(state: cartState, payload: cartPayload): cartState {
+  const { action } = payload
 
   switch (action) {
-    case 'ADD_TO_CART':
-      break
+    case 'ADD_TO_CART': {
+      if (!state.cart) return { ...state, error: true }
+
+      const { cart: stateCart } = state
+      const { payload: product } = payload
+
+      const itemFound = stateCart.cart.find(
+        (item) => item.product._id === product.product._id
+      )
+
+      if (itemFound) {
+        const updatedCart = stateCart.cart.map((item) =>
+          item.product._id === product.product._id
+            ? { ...item, units: item.units + 1 }
+            : item
+        )
+
+        return {
+          ...state,
+          cart: {
+            ...state.cart,
+            cart: updatedCart,
+          },
+        }
+      } else {
+        return {
+          ...state,
+          cart: {
+            ...state.cart,
+            cart: [...stateCart.cart, { ...product, units: 1 }],
+          },
+        }
+      }
+    }
     case 'GET_CART':
-      break
-    case 'REMOVE_FROM_CART':
-      break
+      return { cart: payload.payload, error: false }
+    case 'REMOVE_FROM_CART': {
+      if (!state.cart) return { ...state, error: true }
+
+      const { cart: stateCart } = state
+      const { payload: product } = payload
+
+      const itemFound = stateCart.cart.find(
+        (item) => item.product._id === product.product._id
+      )
+
+      if (itemFound) {
+        const unitsToUpdate = itemFound.units - 1
+
+        const updatedCart = unitsToUpdate
+          ? stateCart.cart.map((item) =>
+              item.product._id == product.product._id
+                ? { ...item, units: unitsToUpdate }
+                : item
+            )
+          : stateCart.cart.filter(
+              (item) => item.product._id !== product.product._id
+            )
+
+        return {
+          ...state,
+          cart: {
+            ...state.cart,
+            cart: updatedCart,
+          },
+        }
+      } else {
+        return { ...state, error: true }
+      }
+    }
+    case 'FETCH_ERROR':
+      return { ...state, error: true }
     default:
       return state
   }

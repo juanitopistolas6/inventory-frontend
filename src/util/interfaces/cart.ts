@@ -1,6 +1,7 @@
 import { IProduct } from './product'
 
-interface ICartProduct extends IProduct {
+export interface ICartProduct {
+  product: IProduct
   units: number
 }
 

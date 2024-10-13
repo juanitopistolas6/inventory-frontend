@@ -1,6 +1,9 @@
+import { useCart } from '../context/cart-context'
 import { CartItem } from './cart-item'
 
 export const OrderBill = () => {
+  const { state } = useCart()
+
   return (
     <div className="flex-col">
       <div className="bg-white w-full rounded-md px-3 gap-2">
@@ -10,7 +13,9 @@ export const OrderBill = () => {
           <div className="flex-col space-y-3 py-3">
             {/* Cart */}
 
-            <CartItem />
+            {state.cart?.cart.map((item) => {
+              return <CartItem {...item} key={item.product._id} />
+            })}
           </div>
 
           <div className="flex-col py-2 space-y-3">
