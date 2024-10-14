@@ -10,13 +10,14 @@ export const useAxios = () => {
     (config) => {
       const token = Cookies.get('token')
 
-      if (token) {
-        config.headers['Authorization'] = `Bearer ${token}`
-      }
+      if (!token) throw new Error('Token not found')
+
+      config.headers['Authorization'] = `Bearer ${token}`
 
       return config
     },
     (error) => {
+      console.log('no se ha podido')
       return Promise.reject(error)
     }
   )

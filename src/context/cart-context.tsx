@@ -9,7 +9,13 @@ import {
 import { cartPayload, cartReducer, cartState } from '../hooks/cart-reducer'
 import { useAxios } from '../hooks/use-axios'
 import { UseMutateFunction, useMutation } from '@tanstack/react-query'
-import { ICart, IProduct, IResponse } from '../util/interfaces'
+import {
+  ICart,
+  ICartProduct,
+  IOrder,
+  IProduct,
+  IResponse,
+} from '../util/interfaces'
 
 interface IContextCart {
   dispatch: Dispatch<cartPayload>
@@ -22,6 +28,13 @@ interface IContextCart {
     unknown
   >
   getCart: UseMutateFunction<IResponse<ICart>, Error, void, unknown>
+  removeItem: UseMutateFunction<
+    IResponse<ICart>,
+    unknown,
+    ICartProduct,
+    unknown
+  >
+  createOrder: UseMutateFunction<IResponse<IOrder>, Error, void, unknown>
 }
 
 const cartContext = createContext<IContextCart | null>(null)
@@ -106,12 +119,58 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     },
   })
 
+  const { mutate: removeItem } = useMutation<
+    IResponse<ICart>,
+    unknown,
+    ICartProduct
+  >({
+    mutationFn: async (product) => {
+      const payload = { id: product.product._id, units: product.units }
+
+      const response = await axios.delete('/cart', { data: payload })
+
+      return response.data
+    },
+    onSuccess: (data, product) => {
+      if (data.status !== 200) {
+        dispatch({ action: 'FETCH_ERROR' })
+        return
+      }
+
+      dispatch({ action: 'REMOVE_ITEM', payload: product.product })
+    },
+    onError: () => {
+      dispatch({ action: 'FETCH_ERROR' })
+    },
+  })
+
+  const { mutate: createOrder } = useMutation<IResponse<IOrder>>({
+    mutationFn: async () => {
+      const response = await axios.post('/order')
+
+      return response.data
+    },
+    onSuccess: (data) => {
+      if (data.status !== 200) {
+        dispatch({ action: 'FETCH_ERROR' })
+        return
+      }
+
+      dispatch({ action: 'CLEAR_CART' })
+    },
+    onError: () => {
+      dispatch({ action: 'FETCH_ERROR' })
+    },
+  })
+
   const value: IContextCart = {
     state,
     dispatch,
     addToCart,
     removeFromCart,
     getCart,
+    removeItem,
+    createOrder,
   }
 
   return <cartContext.Provider value={value}>{children}</cartContext.Provider>

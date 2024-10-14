@@ -1,4 +1,4 @@
-import { ICart, ICartProduct, IResponse } from '../util/interfaces'
+import { ICart, ICartProduct, IProduct, IResponse } from '../util/interfaces'
 import { useAxios } from './use-axios'
 
 export interface cartState {
@@ -10,7 +10,9 @@ export type cartPayload =
   | { action: 'ADD_TO_CART'; payload: ICartProduct }
   | { action: 'REMOVE_FROM_CART'; payload: ICartProduct }
   | { action: 'GET_CART'; payload: ICart }
+  | { action: 'REMOVE_ITEM'; payload: IProduct }
   | { action: 'FETCH_ERROR' }
+  | { action: 'CLEAR_CART' }
 
 const { axios } = useAxios()
 
@@ -101,6 +103,29 @@ export function cartReducer(state: cartState, payload: cartPayload): cartState {
       } else {
         return { ...state, error: true }
       }
+    }
+    case 'REMOVE_ITEM': {
+      if (!state.cart) return { ...state, error: true }
+
+      const { payload: product } = payload
+      const { cart: stateCart } = state
+
+      return {
+        ...state,
+        cart: {
+          ...stateCart,
+          cart: stateCart.cart.filter(
+            (item) => item.product._id !== product._id
+          ),
+        },
+      }
+    }
+    case 'CLEAR_CART': {
+      if (!state.cart) return { ...state, error: true }
+
+      const { cart: stateCart } = state
+
+      return { ...state, cart: { ...stateCart, cart: [] } }
     }
     case 'FETCH_ERROR':
       return { ...state, error: true }

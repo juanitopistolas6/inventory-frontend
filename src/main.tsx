@@ -4,6 +4,7 @@ import App from './App.tsx'
 import './index.css'
 import { AuthProvider } from './context/auth-context.tsx'
 import { CartProvider } from './context/cart-context.tsx'
+import { ProdctProvider } from './context/products.tsx'
 
 const client = new QueryClient()
 
@@ -11,7 +12,9 @@ createRoot(document.getElementById('root')!).render(
   <QueryClientProvider client={client}>
     <AuthProvider>
       <CartProvider>
-        <App />
+        <ProdctProvider>
+          <App />
+        </ProdctProvider>
       </CartProvider>
     </AuthProvider>
   </QueryClientProvider>

@@ -4,7 +4,7 @@ import { HeroIcons } from './ui/heroicons'
 
 export const CartItem = (product: ICartProduct) => {
   const { _id, banner, name, price, units } = product.product
-  const { addToCart, removeFromCart } = useCart()
+  const { addToCart, removeFromCart, removeItem } = useCart()
 
   return (
     <div
@@ -45,7 +45,12 @@ export const CartItem = (product: ICartProduct) => {
           </button>
         </div>
 
-        <button className="text-[12px] text-red-500 text-end w-full hover:underline">
+        <button
+          className="text-[12px] text-red-500 text-end w-full hover:underline"
+          onClick={() => {
+            removeItem(product)
+          }}
+        >
           Remove
         </button>
       </div>

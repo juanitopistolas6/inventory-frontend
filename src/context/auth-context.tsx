@@ -7,7 +7,7 @@ import React, {
 } from 'react'
 import Cookies from 'js-cookie'
 import { IUser } from '../util/interfaces/user'
-import { UseMutateFunction, useMutation } from '@tanstack/react-query'
+import { UseMutateFunction, useMutation, useQuery } from '@tanstack/react-query'
 import { AxiosInstance } from 'axios'
 import { ILogin } from '../util/interfaces/context'
 import { IResponse, ITokenUser } from '../util/interfaces'
@@ -25,10 +25,10 @@ interface authProp {
 const authContext = createContext<authProp | null>(null)
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
+  const { axios } = useAxios()
   const [user, setUser] = useState<IUser | null>(null)
   const [isAuthenticated, setAuthenticated] = useState<boolean>(false)
   const [error, setError] = useState<boolean>(false)
-  const { axios } = useAxios()
 
   const { mutate: login } = useMutation<IResponse<ITokenUser>, unknown, ILogin>(
     {
@@ -59,32 +59,31 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   )
 
-  const { mutate: verifyToken } = useMutation<IResponse<IUser>, unknown>({
-    mutationFn: async () => {
-      const response = await axios.post('/auth/verify')
+  const { data: tokenData, isSuccess } = useQuery<IResponse<IUser>>({
+    enabled: !!Cookies.get('token'),
+    queryKey: ['token'],
+    queryFn: async () => {
+      const response = await axios.post<IResponse<IUser>>('/auth/verify')
 
       return response.data
-    },
-    onSuccess: (data) => {
-      setUser(data.data)
-
-      setAuthenticated(true)
-    },
-    onError: () => {
-      setUser(null)
-
-      setAuthenticated(false)
     },
   })
 
   useEffect(() => {
-    if (!axios.defaults.headers.common['Authorization']) {
+    if (!isSuccess) return
+
+    if (!tokenData) {
+      console.log('no logeado')
+      setUser(null)
       setAuthenticated(false)
+      setError(true)
       return
     }
 
-    verifyToken()
-  }, [])
+    setUser(tokenData.data)
+    setError(false)
+    setAuthenticated(true)
+  }, [isSuccess])
 
   const value: authProp = {
     login,

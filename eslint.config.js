@@ -38,6 +38,10 @@ export default [
         },
       ],
       'react/react-in-jsx-scope': 'off', // Desactivar la regla de React en JSX
+      'no-unused-vars': [
+        'warn',
+        { vars: 'all', args: 'none', ignoreRestSiblings: true },
+      ],
       ...configPrettier.rules, // Incluir las reglas de Prettier
     },
   },
