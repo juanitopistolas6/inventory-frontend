@@ -2,7 +2,7 @@ import { Outlet } from 'react-router-dom'
 import { HeroIcons } from '../components/ui/heroicons'
 import { ProfileButton } from '../components/profile-button'
 import { useForm } from 'react-hook-form'
-import { useProducts } from '../context/products'
+import { useProducts } from '../context/products-context'
 import { useEffect } from 'react'
 
 interface form {

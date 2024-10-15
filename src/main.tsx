@@ -4,7 +4,7 @@ import App from './App.tsx'
 import './index.css'
 import { AuthProvider } from './context/auth-context.tsx'
 import { CartProvider } from './context/cart-context.tsx'
-import { ProdctProvider } from './context/products.tsx'
+import { ProdctProvider } from './context/products-context.tsx'
 
 const client = new QueryClient()
 

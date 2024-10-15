@@ -1,4 +1,4 @@
-import { useProducts } from '../context/products'
+import { useProducts } from '../context/products-context'
 import cn from 'clsx'
 
 export const CategoryButton = ({

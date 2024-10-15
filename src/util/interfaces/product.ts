@@ -7,3 +7,12 @@ export interface IProduct {
   units: number
   suplier: string
 }
+
+export interface IProductPayload {
+  name: string
+  banner: string
+  category: string
+  price: number
+  units: number
+  suplier: string
+}

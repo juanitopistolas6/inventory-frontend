@@ -10,7 +10,7 @@ export const useAxios = () => {
     (config) => {
       const token = Cookies.get('token')
 
-      if (!token) throw new Error('Token not found')
+      if (!token) return config
 
       config.headers['Authorization'] = `Bearer ${token}`
 

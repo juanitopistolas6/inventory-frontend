@@ -1,12 +1,19 @@
 import { ProductCard } from './product-card'
-import { useProducts } from '../context/products'
+import { useProducts } from '../context/products-context'
 import { CategoryButton } from './category-button'
+import { OrdersHistory } from './orders-history'
 
 export const Products = () => {
   const { products, categories } = useProducts()
 
   return (
     <div className="flex-col space-y-4">
+      <div className="flex-col space-y-2">
+        <h1 className="text-start font-bold text-3xl">Ordenes</h1>
+
+        <OrdersHistory />
+      </div>
+
       <h1 className="text-start font-bold text-3xl">Lista de productos</h1>
 
       <div className="flex gap-3">

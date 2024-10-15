@@ -12,9 +12,9 @@ export const CartItem = (product: ICartProduct) => {
       id={_id}
     >
       <div className="flex gap-1">
-        <img src={banner} className="h-14 object-cover" />
+        <img src={banner} height={48} className="h-12 w-fit object-cover" />
 
-        <div className="flex-col m-auto">
+        <div className="flex-col m-auto flex">
           <p className="text-sm xl:hidden 2xl:block ">{name}</p>
           <p className="text-sm">{`$${price}`}</p>
         </div>
@@ -23,7 +23,7 @@ export const CartItem = (product: ICartProduct) => {
       <div className="flex-col my-auto">
         <div className="flex items-center bg-white rounded-xl px-1">
           <button
-            className="text-black border font-bold border-gray-300 rounded-full p-1 hover:bg-gray-200"
+            className="text-black border xl:hidden 2xl:block font-bold border-gray-300 rounded-full p-1 hover:bg-gray-200"
             onClick={() => {
               removeFromCart(product.product)
             }}
@@ -32,10 +32,16 @@ export const CartItem = (product: ICartProduct) => {
             <HeroIcons name="MinusIcon" className="w-3 h-3" />
           </button>
 
-          <span className="mx-3 text-lg">{product.units}</span>
+          <div className="flex items-center">
+            <HeroIcons
+              name="ShoppingCartIcon"
+              className="h-5 w-5 xl:block 2xl:hidden"
+            />
+            <span className="text-lg xl:mx-auto 2xl:mx-3">{product.units}</span>
+          </div>
 
           <button
-            className="flex text-white bg-blue-500 font-bold rounded-full p-1 hover:bg-blue-600"
+            className="flex text-white xl:hidden 2xl:block bg-blue-500 font-bold rounded-full p-1 hover:bg-blue-600"
             onClick={() => {
               addToCart(product.product)
             }}
@@ -46,7 +52,7 @@ export const CartItem = (product: ICartProduct) => {
         </div>
 
         <button
-          className="text-[12px] text-red-500 text-end w-full hover:underline"
+          className="text-[12px] xl:hidden 2xl:block text-red-500 text-end w-full hover:underline"
           onClick={() => {
             removeItem(product)
           }}

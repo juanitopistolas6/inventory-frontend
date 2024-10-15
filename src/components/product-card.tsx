@@ -1,6 +1,7 @@
 import { useCart } from '../context/cart-context'
 import { IProduct } from '../util/interfaces'
 import { HeroIcons } from './ui/heroicons'
+import cn from 'clsx'
 
 export const ProductCard = (product: IProduct) => {
   const { _id, banner, category, name, price } = product
@@ -10,7 +11,10 @@ export const ProductCard = (product: IProduct) => {
 
   return (
     <div
-      className="mx-auto bg-white rounded-lg px-1 py-2 border-2  overflow-hidden"
+      className={cn(
+        'mx-auto bg-white rounded-lg px-1 py-2 border-2  overflow-hidden transition-colors',
+        inCart ? 'border-green-400' : ''
+      )}
       id={_id}
     >
       <img

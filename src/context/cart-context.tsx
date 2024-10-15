@@ -14,6 +14,7 @@ import {
   ICartProduct,
   IOrder,
   IProduct,
+  IProductPayload,
   IResponse,
 } from '../util/interfaces'
 
@@ -35,6 +36,12 @@ interface IContextCart {
     unknown
   >
   createOrder: UseMutateFunction<IResponse<IOrder>, Error, void, unknown>
+  createProduct: UseMutateFunction<
+    IResponse<IProduct>,
+    unknown,
+    IProductPayload,
+    unknown
+  >
 }
 
 const cartContext = createContext<IContextCart | null>(null)
@@ -49,6 +56,21 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     getCart()
   }, [])
+
+  const { mutate: createProduct } = useMutation<
+    IResponse<IProduct>,
+    unknown,
+    IProductPayload
+  >({
+    mutationFn: async (product: IProductPayload) => {
+      const resposne = await axios.post('/product', product)
+
+      return resposne.data
+    },
+    onError: (error) => {
+      console.log(error)
+    },
+  })
 
   const { mutate: addToCart } = useMutation<
     IResponse<ICart>,
@@ -171,6 +193,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     getCart,
     removeItem,
     createOrder,
+    createProduct,
   }
 
   return <cartContext.Provider value={value}>{children}</cartContext.Provider>

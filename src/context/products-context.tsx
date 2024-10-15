@@ -1,5 +1,5 @@
 import { createContext, ReactNode, useContext, useMemo, useState } from 'react'
-import { IProduct, IResponse } from '../util/interfaces'
+import { IOrder, IProduct, IResponse } from '../util/interfaces'
 import { useAxios } from '../hooks/use-axios'
 import { useQuery } from '@tanstack/react-query'
 import { useAuth } from './auth-context'
@@ -8,6 +8,7 @@ interface IProductContext {
   products: IProduct[] | undefined
   categories: string[] | undefined
   categoryFilter: string | null
+  orders: IOrder[] | undefined
   resetFilters: () => void
   filterProducts: (category: string) => void
   filterByName: (name: string | undefined) => void
@@ -32,6 +33,15 @@ export const ProdctProvider = ({ children }: { children: ReactNode }) => {
       const response = await axios.get<IResponse<IProduct[]>>('/product')
 
       return response.data
+    },
+  })
+
+  const { data: orders } = useQuery<IOrder[]>({
+    queryKey: ['orders'],
+    queryFn: async () => {
+      const response = await axios.get<IResponse<IOrder[]>>('/order')
+
+      return response.data.data
     },
   })
 
@@ -86,6 +96,7 @@ export const ProdctProvider = ({ children }: { children: ReactNode }) => {
     resetFilters,
     categoryFilter,
     filterByName,
+    orders,
   }
 
   return (
