@@ -1,10 +1,11 @@
 import { useMemo, useState } from 'react'
 import { useProducts } from '../context/products-context'
 import { HeroIcons } from './ui/heroicons'
+import { OrderCard } from './order-card'
 
 const initialValue = {
   start: 0,
-  end: 3,
+  end: 4,
 }
 
 interface INextPrevOrder {
@@ -35,18 +36,29 @@ export const OrdersHistory = () => {
   }
 
   return (
-    <div className="w-full h-full relative">
-      <div className="flex justify-between items-center w-full  relative z-10">
-        <button className="rounded-full p-2 bg-white shadow-lg">
-          <HeroIcons name="ArrowLeftIcon" />
-        </button>
-
-        <button className="rounded-full p-2 bg-white shadow-lg">
-          <HeroIcons name="ArrowRightIcon" />
-        </button>
+    <div className="w-full h-28 relative">
+      <div className="absolute flex top-1/2 -translate-y-1/2 w-full z-10">
+        {scroll.start - 1 > 0 ? (
+          <button
+            className="-ml-4 rounded-full p-2 bg-white shadow-lg absolute left-0 top-1/2 -translate-y-1/2"
+            onClick={() => prev()}
+          >
+            <HeroIcons name="ArrowLeftIcon" />
+          </button>
+        ) : null}
+        {scroll.end + 1 <= (orders?.length ?? 0) ? (
+          <button
+            className="rounded-full -mr-4 p-2 bg-white shadow-lg absolute right-0 top-1/2 -translate-y-1/2"
+            onClick={() => next()}
+          >
+            <HeroIcons name="ArrowRightIcon" />
+          </button>
+        ) : null}
       </div>
-      <div className="absolute top-0 left-0 w-full h-full flex items-center text-4xl z-0">
-        adoawkdpoakdpoakdwpo
+      <div className="w-full h-full flex items-center z-0 gap-5 px-2  overflow-hidden">
+        {slicedOrders?.map((item) => {
+          return <OrderCard {...item} key={item._id} />
+        })}
       </div>
     </div>
   )

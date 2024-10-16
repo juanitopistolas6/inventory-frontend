@@ -16,9 +16,9 @@ export const OrderBill = () => {
   }, [state])
 
   return (
-    <div className="flex-col">
+    <div className="flex-col h-full">
       <div className="bg-white w-full rounded-md px-3 gap-2">
-        <h1 className="text-2xl font-bold border-b pt-1">Order Bill</h1>
+        <h1 className="text-2xl font-bold border-b pt-1">Carro de compras</h1>
 
         <div className="flex-col space-y-3">
           <div className="flex-col space-y-3 py-3">

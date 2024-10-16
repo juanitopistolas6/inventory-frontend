@@ -24,8 +24,8 @@ export const MainLayout = () => {
   }, [watch])
 
   return (
-    <div className="flex-col h-screen">
-      <div className="md:h-16 flex justify-between py-2 px-5 border-b sticky top-1 z-10 bg-white">
+    <div className="flex-col h-full">
+      <div className="md:h-16 flex justify-between py-2 px-5 border-b sticky top-0 z-20 bg-white">
         <div className="md:w-10 bg-blue-400"></div> {/* WEBSITE ICON */}
         <div className="flex gap-2 px-2 border-2 rounded-l-xl rounded-r-xl border-gray-200 h-[80%] w-96 items-center my-auto">
           <HeroIcons name="MagnifyingGlassIcon" />
@@ -40,7 +40,9 @@ export const MainLayout = () => {
         <ProfileButton />
       </div>
 
-      <Outlet />
+      <div className="h-full">
+        <Outlet />
+      </div>
     </div>
   )
 }
