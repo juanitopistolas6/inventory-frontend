@@ -8,7 +8,13 @@ import {
 } from 'react'
 import { cartPayload, cartReducer, cartState } from '../hooks/cart-reducer'
 import { useAxios } from '../hooks/use-axios'
-import { UseMutateFunction, useMutation } from '@tanstack/react-query'
+import {
+  QueryObserverResult,
+  RefetchOptions,
+  UseMutateFunction,
+  useMutation,
+  useQuery,
+} from '@tanstack/react-query'
 import {
   ICart,
   ICartProduct,
@@ -17,6 +23,7 @@ import {
   IProductPayload,
   IResponse,
 } from '../util/interfaces'
+import { useAuth } from './auth-context'
 
 interface IContextCart {
   dispatch: Dispatch<cartPayload>
@@ -28,7 +35,9 @@ interface IContextCart {
     IProduct,
     unknown
   >
-  getCart: UseMutateFunction<IResponse<ICart>, Error, void, unknown>
+  getCart: (
+    options?: RefetchOptions
+  ) => Promise<QueryObserverResult<IResponse<ICart>, Error>>
   removeItem: UseMutateFunction<
     IResponse<ICart>,
     unknown,
@@ -47,15 +56,12 @@ interface IContextCart {
 const cartContext = createContext<IContextCart | null>(null)
 
 export const CartProvider = ({ children }: { children: ReactNode }) => {
+  const { isAuthenticated } = useAuth()
   const [state, dispatch] = useReducer(cartReducer, {
     cart: null,
     error: false,
   })
   const { axios } = useAxios()
-
-  useEffect(() => {
-    getCart()
-  }, [])
 
   const { mutate: createProduct } = useMutation<
     IResponse<IProduct>,
@@ -122,22 +128,17 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     },
   })
 
-  const { mutate: getCart } = useMutation<IResponse<ICart>>({
-    mutationFn: async () => {
+  const {
+    data: cart,
+    refetch: getCart,
+    isSuccess,
+  } = useQuery<IResponse<ICart>>({
+    enabled: isAuthenticated,
+    queryKey: ['cart'],
+    queryFn: async () => {
       const response = await axios.get('/cart')
 
       return response.data
-    },
-    onSuccess: (data) => {
-      if (data.status !== 200) {
-        dispatch({ action: 'FETCH_ERROR' })
-        return
-      }
-
-      dispatch({ action: 'GET_CART', payload: data.data })
-    },
-    onError: () => {
-      dispatch({ action: 'FETCH_ERROR' })
     },
   })
 
@@ -184,6 +185,14 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
       dispatch({ action: 'FETCH_ERROR' })
     },
   })
+
+  useEffect(() => {
+    if (!isSuccess) return
+
+    if (cart.status !== 200) return
+
+    dispatch({ action: 'GET_CART', payload: cart.data })
+  }, [cart])
 
   const value: IContextCart = {
     state,

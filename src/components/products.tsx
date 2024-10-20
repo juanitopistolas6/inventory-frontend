@@ -1,10 +1,10 @@
 import { ProductCard } from './product-card'
 import { useProducts } from '../context/products-context'
-import { CategoryButton } from './category-button'
 import { OrdersHistory } from './orders-history'
+import { Categories } from './categories'
 
 export const Products = () => {
-  const { products, categories } = useProducts()
+  const { products } = useProducts()
 
   return (
     <div className="flex-col space-y-4">
@@ -17,17 +17,7 @@ export const Products = () => {
       <h1 className="text-start font-bold text-3xl">Lista de productos</h1>
 
       <div className="flex gap-3">
-        <CategoryButton standard />
-
-        {categories?.map((category) => {
-          return (
-            <CategoryButton
-              category={category}
-              standard={false}
-              key={category}
-            />
-          )
-        })}
+        <Categories />
       </div>
 
       <div className="border-b-1 border border-gray-400"></div>

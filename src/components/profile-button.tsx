@@ -2,8 +2,10 @@ import { HeroIcons } from './ui/heroicons'
 import { Modal } from './modal'
 import { Access } from './modals/access'
 import { useModal } from '../hooks/use-modal'
+import { useAuth } from '../context/auth-context'
 
 export const ProfileButton = () => {
+  const { isAuthenticated, user } = useAuth()
   const { open, handleClose, handleOpen } = useModal()
 
   return (
@@ -21,10 +23,12 @@ export const ProfileButton = () => {
         onClick={handleOpen}
       >
         <HeroIcons name="UserCircleIcon" className="h-full stroke-1" />
-        <div className="block text-[14px] space-y-0">
-          <p className="font-bold text-end h-4">juanitopistolas</p>
-          <p className="align-text-top h-full">rodriguez</p>
-        </div>
+        {isAuthenticated && (
+          <div className="block text-[14px] space-y-0">
+            <p className="font-bold text-end h-4">{user?.name}</p>
+            <p className="align-text-top h-full">{user?.user}</p>
+          </div>
+        )}
       </button>
     </>
   )

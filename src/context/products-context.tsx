@@ -37,6 +37,7 @@ export const ProdctProvider = ({ children }: { children: ReactNode }) => {
   })
 
   const { data: orders } = useQuery<IOrder[]>({
+    enabled: isAuthenticated,
     queryKey: ['orders'],
     queryFn: async () => {
       const response = await axios.get<IResponse<IOrder[]>>('/order')

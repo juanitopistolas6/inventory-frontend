@@ -41,7 +41,7 @@ export const Order = () => {
             <p className="sm:hidden 2xl:block font-bold text-start">Añadir</p>
           </button>
         </div>
-        <div className="w-10/12 border-r px-5 pt-4">
+        <div className="w-10/12 border-r px-5 pt-4 pb-5">
           <Products />
         </div>
         <div className="w-1/4 h-auto bg-gray-100 px-5 py-4">

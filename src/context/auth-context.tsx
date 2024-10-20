@@ -59,11 +59,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   )
 
-  const { data: tokenData, isSuccess } = useQuery<IResponse<IUser>>({
+  const { data: tokenData, isSuccess } = useQuery<IUser>({
     enabled: !!Cookies.get('token'),
     queryKey: ['token'],
     queryFn: async () => {
-      const response = await axios.post<IResponse<IUser>>('/auth/verify')
+      const response = await axios.post<IUser>('/auth/verify')
 
       return response.data
     },
@@ -80,7 +80,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       return
     }
 
-    setUser(tokenData.data)
+    setUser(tokenData)
     setError(false)
     setAuthenticated(true)
   }, [isSuccess])
